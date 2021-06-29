@@ -1,4 +1,4 @@
-function [sig] = robustTests(A, B, N, varargin)
+function [h, p, tstat, FDR, Bonferroni, Sidak] = robustTests(A, B, N, varargin)
 % ROBUSTTESTS is a wrapper function for a statistical test paired with
 % multiple comparison correction.
 %	
@@ -27,37 +27,37 @@ for k = 1:2:length(varargin)
 end
 
 % Preallocate storage arrays
-sig.h = nan(N, 1);
-sig.p = nan(N, 1);
-sig.tstat = nan(N, 1);
+h = nan(N, 1);
+p = nan(N, 1);
+tstat = nan(N, 1);
 
 % Run tests for each assembly
 switch testtype
 	case 'kstest2'
 		for r = 1:N
-			[sig.h(r), sig.p(r), sig.tstat(r)] = kstest2(A(r,:), B(r,:), 'Alpha',pval(1));
+			[h(r), p(r), tstat(r)] = kstest2(A(r,:), B(r,:), 'Alpha',pval(1));
 		end
 		clear r
 	case 'ttest2'
 		for r = 1:N
-			[sig.h(r), sig.p(r), ~, stats] = ttest2(A(r,:), B(r,:), 'Alpha',pval(1));
-			sig.tstat(r) = stats.tstat;
+			[h(r), p(r), ~, stats] = ttest2(A(r,:), B(r,:), 'Alpha',pval(1));
+			tstat(r) = stats.tstat;
 		end
 	case 'permutation'
 		for r = 1:N
-			[sig.p(r), ~, sig.tstat(r)] = permutationTest(A(r,:), B(r,:), permutations, 'exact',exact, 'sidedness','both');
-			sig.h(r) = sig.p(r) < pval(1);
+			[p(r), ~, tstat(r)] = permutationTest(A(r,:), B(r,:), permutations, 'exact',exact, 'sidedness','both');
+			h(r) = p(r) < pval(1);
 		end
 	case 'ranksum'
 		for r = 1:N
-			[sig.h(r), sig.p(r), stats] = ranksum(A(r,:), B(r,:), 'Alpha',pval(1));
-			sig.tstat(r) = stats.ranksum;
+			[h(r), p(r), stats] = ranksum(A(r,:), B(r,:), 'Alpha',pval(1));
+			tstat(r) = stats.ranksum;
 		end
 	otherwise
 		
 end
 
 % Run mutliple comparison corrections on p-values
-[sig.FDR, sig.Bonferroni, sig.Sidak] = mCompCorr(N, sig.p, pval);
+[FDR, Bonferroni, Sidak] = mCompCorr(N, p, pval);
 
 end
