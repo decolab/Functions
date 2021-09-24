@@ -5,39 +5,36 @@ function [] = means(C, h, sig)
 
 
 if sig(1) || sig(2)
+    
+    % Allocate arrays
     mc = nan(length(C), 1);
+    mp = nan(length(C), 1);
     i = nan(length(C), 1);
+    
+    % Get marker locations
     for f = 1:length(C)
+        % Get marker heights
         [mc(f),i(f)] = max(h{C(f)}.BinCounts);
         mc(f) = mc(f)/sum(h{C(f)}.BinCounts);
+        
+        % Get means
+        mp(f) = mean(h{C(f)}.Data);
     end
-
-    mp{1} = mean([h{C(1)}.BinEdges(i(1):i(1)+1), h{C(2)}.BinEdges(i(2):i(2)+1)]);
-    mp{2} = [mean(h{C(1)}.BinEdges(i(1):i(1)+1)), mean(h{C(2)}.BinEdges(i(2):i(2)+1))];
-
+    
+    % Plot markers
     if sig(1) && sig(2)
-        for f = 1:length(C)
-            mp{1} = mean([h{C(1)}.BinEdges(i(1):i(1)+1), h{C(2)}.BinEdges(i(2):i(2)+1)]);
-            mp{2} = [mean(h{C(1)}.BinEdges(i(1):i(1)+1)), mean(h{C(2)}.BinEdges(i(2):i(2)+1))];
-        end
-
-        plot(mp{1}, 1.05*max(mc), '*g');
-        plot(mp{2}, 1.02*[max(mc),max(mc)], '-g');
-        plot(mp{2}(1), 1.02*[max(mc),max(mc)], '+g');
-        plot(mp{2}(2), 1.02*[max(mc),max(mc)], '+g');
+        plot(mean(mp), 1.05*max(mc), '*g');
+        plot(mp, 1.02*max(mc)*ones(1,length(C)), '-g');
+        scatter(mp, 1.02*max(mc)*ones(1,length(C)), '+g');
     elseif sig(2)
-        plot(mp{1}, 1.05*max(mc), '*b');
-        plot(mp{2}, 1.02*[max(mc),max(mc)], '-b');
-        plot(mp{2}(1), 1.02*[max(mc),max(mc)], '+b');
-        plot(mp{2}(2), 1.02*[max(mc),max(mc)], '+b');
+        plot(mean(mp), 1.05*max(mc), '*b');
+        plot(mp, 1.02*max(mc)*ones(1,length(C)), '-b');
+        scatter(mp, 1.02*max(mc)*ones(1,length(C)), '+b');
     else
-        plot(mp{1}, 1.05*max(mc), '*r');
-        plot(mp{2}, 1.02*[max(mc),max(mc)], '-r');
-        plot(mp{2}(1), 1.02*[max(mc),max(mc)], '+r');
-        plot(mp{2}(2), 1.02*[max(mc),max(mc)], '+r');
+        plot(mean(mp), 1.05*max(mc), '*r');
+        plot(mp, 1.02*max(mc)*ones(1,length(C)), '-r');
+        scatter(mp, 1.02*max(mc)*ones(1,length(C)), '+r');
     end
 end
-
-
 end
 

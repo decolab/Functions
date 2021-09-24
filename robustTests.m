@@ -10,7 +10,7 @@ end
 pval = 0.05;
 testtype = 'kstest2';
 permutations = 10000;
-exact = false;
+exact = 0;
 
 % unpack varagin
 for k = 1:2:length(varargin)
